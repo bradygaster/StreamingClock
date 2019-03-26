@@ -19,9 +19,6 @@ namespace ConsoleClient
 
                 await connection.StartAsync();
                 
-                Console.WriteLine("Client connected. Streaming the time.");
-                Console.WriteLine("Ctrl-C to exit.");
-
                 var cancellationTokenSource = new CancellationTokenSource();
                 var channel = await connection.StreamAsChannelAsync<string>("ServerTimer", 
                     cancellationTokenSource.Token);
@@ -30,7 +27,11 @@ namespace ConsoleClient
                 {
                     while (channel.TryRead(out var time))
                     {
+                        Console.Clear();
+                        Console.WriteLine("Client connected. Streaming the time.");
+                        Console.WriteLine("Ctrl-C to exit.");
                         Console.WriteLine(time);
+
                     }
                 }
             }
