@@ -52,7 +52,6 @@ namespace RealtimeTimer
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting(routes =>
