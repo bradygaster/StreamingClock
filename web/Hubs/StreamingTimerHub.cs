@@ -11,7 +11,7 @@ namespace RealtimeTimer.Hubs
     {
         public IAsyncEnumerable<string> ServerTimer(CancellationToken token)
         {
-            var channel = Channel.CreateUnbounded<string>();
+            var channel = Channel.CreateBounded<string>(100);
             _ = WriteDateAsync(channel.Writer, token);
             return channel.Reader.ReadAllAsync();
         }
