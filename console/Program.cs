@@ -9,23 +9,13 @@ namespace ConsoleClient
     {
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Connecting to timer");
+            var connection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5000/streamingtime")
+                .Build();
 
-            try
-            {
-                var connection = new HubConnectionBuilder()
-                    .WithUrl("https://localhost:5001/streamingtime")
-                    .WithAutomaticReconnect()
-                    .Build();
+            await connection.StartAsync();
 
-                await connection.StartAsync();
-
-                await StartStreaming(connection);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            await StartStreaming(connection);
         }
 
         static async Task StartStreaming(HubConnection connection)
