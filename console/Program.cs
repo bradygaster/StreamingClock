@@ -15,24 +15,30 @@ namespace ConsoleClient
             {
                 var connection = new HubConnectionBuilder()
                     .WithUrl("https://localhost:5001/streamingtime")
+                    .WithAutomaticReconnect()
                     .Build();
 
                 await connection.StartAsync();
-                
-                var cancellationTokenSource = new CancellationTokenSource();
-                var stream = connection.StreamAsync<string>("ServerTimer", cancellationTokenSource.Token);
 
-                await foreach (var time in stream)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Client connected. Streaming the time.");
-                    Console.WriteLine("Ctrl-C to exit.");
-                    Console.WriteLine(time);
-                }
+                await StartStreaming(connection);
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex);
+            }
+        }
+
+        static async Task StartStreaming(HubConnection connection)
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var stream = connection.StreamAsync<string>("ServerTimer", cancellationTokenSource.Token);
+
+            await foreach (var time in stream)
+            {
+                Console.Clear();
+                Console.WriteLine("Client connected. Streaming the time.");
+                Console.WriteLine("Ctrl-C to exit.");
+                Console.WriteLine(time);
             }
         }
     }
