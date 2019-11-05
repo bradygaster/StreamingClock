@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -8,11 +9,11 @@ namespace RealtimeTimer.Hubs
 {
     public class StreamingTimerHub : Hub
     {
-        public ChannelReader<string> ServerTimer(CancellationToken token)
+        public IAsyncEnumerable<string> ServerTimer(CancellationToken token)
         {
             var channel = Channel.CreateUnbounded<string>();
             _ = WriteDateAsync(channel.Writer, token);
-            return channel.Reader;
+            return channel.Reader.ReadAllAsync();
         }
 
         private async Task WriteDateAsync(ChannelWriter<string> writer, 

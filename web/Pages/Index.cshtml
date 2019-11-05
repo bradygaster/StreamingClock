@@ -13,9 +13,31 @@
 <script>
     var connection = new signalR.HubConnectionBuilder()
         .withUrl("/streamingtime")
+        .withAutomaticReconnect()
         .build();
 
-    connection.start().then(() => {
+    connection.onreconnected((connectionId) =>
+    {
+        startStreaming();
+    });
+
+    async function start() 
+    {
+        try 
+        {
+            connection.start().then(() => {
+                startStreaming();
+            });
+        }
+        catch 
+        {
+            console.log(err);
+            setTimeout(() => start(), 5000);
+        }
+    }
+
+    function startStreaming()
+    {
         connection
             .stream('ServerTimer')
                 .subscribe({
@@ -29,5 +51,7 @@
                         console.log(err);
                     }
                 });
-    });
+    }
+
+    start();
 </script>

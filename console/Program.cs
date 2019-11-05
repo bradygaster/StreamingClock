@@ -20,19 +20,14 @@ namespace ConsoleClient
                 await connection.StartAsync();
                 
                 var cancellationTokenSource = new CancellationTokenSource();
-                var channel = await connection.StreamAsChannelAsync<string>("ServerTimer", 
-                    cancellationTokenSource.Token);
+                var stream = connection.StreamAsync<string>("ServerTimer", cancellationTokenSource.Token);
 
-                while(await channel.WaitToReadAsync())
+                await foreach (var time in stream)
                 {
-                    while (channel.TryRead(out var time))
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Client connected. Streaming the time.");
-                        Console.WriteLine("Ctrl-C to exit.");
-                        Console.WriteLine(time);
-
-                    }
+                    Console.Clear();
+                    Console.WriteLine("Client connected. Streaming the time.");
+                    Console.WriteLine("Ctrl-C to exit.");
+                    Console.WriteLine(time);
                 }
             }
             catch(Exception ex)
